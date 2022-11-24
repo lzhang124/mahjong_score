@@ -1,23 +1,29 @@
 const {
   useEffect,
+  useRef,
   useState
 } = React;
 const {
   Button,
   Grid,
   Input,
-  Table
+  Transition
 } = semanticUIReact;
 const DATA_NAME = 'MahJongData';
 const DEFAULT_DATA = {
-  'names': ['Larry', 'Kimberly', 'Stephanie', 'Dad'],
-  'scores': [[-12, -3, 18, -3], [-3, -6, -6, 15]],
-  'winds': ['東', '東'],
-  'dealers': ['Larry', 'Kimberly'],
-  'winners': ['Stephanie', 'Dad'],
-  'feeders': ['Larry', 'Stephanie']
+  'names': [],
+  'scores': [],
+  'winds': [],
+  'dealers': [],
+  'winners': [],
+  'feeders': [],
+  'wind': null,
+  'dealer': null
 };
 const WINDS = ['東', '南', '西', '北'];
+const PENALTY_POINTS = -6;
+const MIN_POINTS = 3;
+const MAX_POINTS = 10;
 const encode = obj => {
   return JSON.stringify(obj);
 };
@@ -30,35 +36,149 @@ const storeData = (name, data) => {
 const getData = name => {
   return localStorage.getItem(name);
 };
+const sum = arr => {
+  return arr.reduce((accum, a) => accum + a, 0);
+};
 const GlobalButtons = ({
-  refresh
+  setData
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [copyOpen, setCopyOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [error, setError] = useState(false);
+  const uploadRef = useRef(null);
+  const testData = str => {
+    try {
+      decode(str);
+      setError(false);
+      return true;
+    } catch (_) {
+      setError(true);
+      return false;
+    }
+  };
+  const loadData = str => {
+    setData(decode(str));
+    setError(false);
+    setUploadOpen(false);
+  };
+  useEffect(() => {
+    if (uploadOpen) {
+      setError(false);
+      uploadRef.current.inputRef.current.value = '';
+      uploadRef.current.focus();
+    }
+  }, [uploadOpen]);
   return /*#__PURE__*/React.createElement("div", {
     className: "global-buttons"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Button, {
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: menuOpen ? 'close' : 'bars',
+    onClick: () => {
+      if (menuOpen) {
+        setMenuOpen(false);
+        setCopyOpen(false);
+        setUploadOpen(false);
+      } else {
+        setMenuOpen(true);
+      }
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
   }, /*#__PURE__*/React.createElement(Button, {
     basic: true,
     inverted: true,
     circular: true,
     icon: 'refresh',
-    onClick: () => refresh()
-  }));
+    onClick: () => setData(DEFAULT_DATA)
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: "copy",
+    onClick: () => {
+      setUploadOpen(false);
+      setCopyOpen(true);
+      setTimeout(() => setCopyOpen(false), 3000);
+      navigator.clipboard.writeText(getData(DATA_NAME));
+    }
+  })), /*#__PURE__*/React.createElement(Transition, {
+    visible: copyOpen,
+    animation: "fade right",
+    duration: 300
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "popup"
+  }, "Config copied to clipboard!"))), /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    className: uploadOpen ? 'active' : '',
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: "upload",
+    onClick: () => {
+      setUploadOpen(!uploadOpen);
+    }
+  })), /*#__PURE__*/React.createElement(Transition, {
+    visible: uploadOpen,
+    animation: "fade right",
+    duration: 300
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `popup ${error ? 'error' : ''}`
+  }, /*#__PURE__*/React.createElement(Input, {
+    ref: uploadRef,
+    transparent: true,
+    inverted: true,
+    placeholder: "Config",
+    onChange: e => {
+      testData(e.target.value);
+    },
+    onKeyDown: e => {
+      e.key === 'Enter' && e.target.value !== '' && testData(e.target.value) && loadData(e.target.value);
+      e.key === 'Escape' && setUploadOpen(false);
+    }
+  })))));
 };
 const NameInput = ({
-  names,
-  setNames
+  data,
+  setData
 }) => {
+  const {
+    names
+  } = data;
   const [name1, setName1] = useState('');
   const [name2, setName2] = useState('');
   const [name3, setName3] = useState('');
   const [name4, setName4] = useState('');
   return /*#__PURE__*/React.createElement(Grid, {
+    className: "nameInput",
     centered: true,
     verticalAlign: "middle",
     style: {
       height: '100vh'
     }
   }, /*#__PURE__*/React.createElement(Grid.Column, {
-    width: 4,
+    mobile: 15,
+    tablet: 15,
+    computer: 4,
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Input, {
     autoFocus: true,
@@ -91,12 +211,20 @@ const NameInput = ({
     onChange: e => setName4(e.target.value)
   }), /*#__PURE__*/React.createElement(Button, {
     inverted: true,
-    color: "red",
     disabled: !name1 || !name2 || !name3 || !name4,
     style: {
       marginTop: '1rem'
     },
-    onClick: () => setNames([name1, name2, name3, name4])
+    onClick: () => {
+      setData({
+        ...data,
+        ...{
+          names: [name1, name2, name3, name4],
+          wind: 0,
+          dealer: 0
+        }
+      });
+    }
   }, "Start")));
 };
 const DataTable = ({
@@ -107,66 +235,176 @@ const DataTable = ({
     names,
     scores,
     winds,
-    dealers
+    dealers,
+    winners,
+    feeders,
+    wind,
+    dealer
   } = data;
   return /*#__PURE__*/React.createElement(Grid, {
-    centered: true,
-    verticalAlign: "middle",
-    style: {
-      height: '100vh'
-    }
-  }, /*#__PURE__*/React.createElement(Grid.Column, {
-    width: 8,
-    textAlign: "center"
-  }, /*#__PURE__*/React.createElement(Table, {
-    basic: true,
+    className: "dataTable",
     inverted: true,
-    selectable: true,
-    fixed: true,
-    textAlign: "center"
-  }, /*#__PURE__*/React.createElement(Table.Header, null, /*#__PURE__*/React.createElement(Table.Row, null, /*#__PURE__*/React.createElement(Table.HeaderCell, {
-    collapsing: true
-  }), names.map((n, i) => /*#__PURE__*/React.createElement(Table.HeaderCell, {
+    columns: "equal",
+    textAlign: "center",
+    verticalAlign: "middle"
+  }, /*#__PURE__*/React.createElement(Grid.Row, {
+    className: "header"
+  }, /*#__PURE__*/React.createElement(Grid.Column, {
+    width: 1
+  }, WINDS[wind]), names.map((n, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     id: i
-  }, n)))), /*#__PURE__*/React.createElement(Table.Body, null, scores.map((game, i) => /*#__PURE__*/React.createElement(Table.Row, {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: 'point' + (dealer === i ? ' underlined' : '')
+  }, n)))), scores.map((game, i) => /*#__PURE__*/React.createElement(Grid.Row, {
     id: i
-  }, /*#__PURE__*/React.createElement(Table.Cell, {
-    collapsing: true
-  }, winds[i]), game.map((s, j) => /*#__PURE__*/React.createElement(Table.Cell, {
+  }, /*#__PURE__*/React.createElement(Grid.Column, {
+    width: 1
+  }, WINDS[winds[i]]), game.map((s, j) => /*#__PURE__*/React.createElement(Grid.Column, {
     id: j
-  }, s))))), /*#__PURE__*/React.createElement(Table.Footer, null, /*#__PURE__*/React.createElement(Table.Row, null, /*#__PURE__*/React.createElement(Table.HeaderCell, {
-    collapsing: true
-  }), names.map((_, i) => /*#__PURE__*/React.createElement(Table.HeaderCell, {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: 'point' + (s < 0 && winners[i] === j ? ' red' : winners[i] === j ? ' green' : s < 0 && feeders[i] === j ? ' red' : '') + (dealers[i] === j ? ' underlined' : '')
+  }, s))))), /*#__PURE__*/React.createElement(Grid.Row, {
+    className: "footer"
+  }, /*#__PURE__*/React.createElement(Grid.Column, {
+    width: 1
+  }), names.map((_, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     id: i
-  }, scores.reduce((accum, game) => accum + game[i], 0))))))));
+  }, sum(scores.map(game => game[i]))))));
+};
+const GameButtons = ({
+  data,
+  setData
+}) => {
+  const {
+    names,
+    scores,
+    winds,
+    dealers,
+    winners,
+    feeders,
+    wind,
+    dealer
+  } = data;
+  const [winner, setWinner] = useState(null);
+  const [feeder, setFeeder] = useState(null);
+  const [points, setPoints] = useState(null);
+  const nextWind = () => {
+    return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4;
+  };
+  const nextDealer = () => {
+    return points < 0 || winner === dealer ? dealer : (dealer + 1) % 4;
+  };
+  const nextGame = () => {
+    var game = Array(4).fill(-points);
+    game[winner] = 0;
+    if (points > 0) {
+      winner === feeder ? game = game.map(s => s * 2) : game[feeder] = game[feeder] * 2;
+      winner === dealer ? game = game.map(s => s * 2) : game[dealer] = game[dealer] * 2;
+    }
+    game[winner] = -sum(game);
+    setData({
+      ...data,
+      ...{
+        scores: [...scores, game],
+        winds: [...winds, wind],
+        dealers: [...dealers, dealer],
+        winners: [...winners, winner],
+        feeders: [...feeders, feeder],
+        wind: nextWind(),
+        dealer: nextDealer()
+      }
+    });
+    setWinner(null);
+    setFeeder(null);
+    setPoints(null);
+  };
+  return /*#__PURE__*/React.createElement(Grid, {
+    className: "gameButtons",
+    inverted: true,
+    columns: "equal",
+    textAlign: "center",
+    verticalAlign: "middle"
+  }, /*#__PURE__*/React.createElement(Grid.Row, null, names.map((n, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+    id: i
+  }, /*#__PURE__*/React.createElement(Button, {
+    inverted: true,
+    fluid: true,
+    color: "green",
+    active: winner === i,
+    onClick: () => {
+      setWinner(i);
+      setFeeder(null);
+    }
+  }, n)))), /*#__PURE__*/React.createElement(Grid.Row, null, names.map((n, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+    id: i
+  }, /*#__PURE__*/React.createElement(Button, {
+    inverted: true,
+    fluid: true,
+    disabled: winner === null,
+    color: winner === null ? '' : winner === i ? 'green' : 'red',
+    active: feeder === i,
+    onClick: () => {
+      setFeeder(i);
+    }
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS].concat([...Array(MAX_POINTS + 1).keys()].slice(MIN_POINTS)).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+    id: i,
+    textAlign: "center"
+  }, /*#__PURE__*/React.createElement(Button, {
+    inverted: true,
+    circular: true,
+    color: p > 0 ? 'white' : 'red',
+    active: points === p,
+    onClick: () => {
+      setPoints(p);
+    }
+  }, p)))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
+    inverted: true,
+    fluid: true,
+    disabled: winner === null || feeder === null || !points,
+    onClick: () => {
+      nextGame();
+    }
+  }, "Next Game"))));
 };
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
-  const names = data['names'] || [];
   const setData = data => {
     _setData(data);
     storeData(DATA_NAME, encode(data));
   };
-  const refresh = () => {
-    setData(DEFAULT_DATA);
-  };
-  const setNames = names => {
-    setData({
-      ...data,
-      ...{
-        names
-      }
-    });
-  };
-  return (data['names'] || []).length === 4 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GlobalButtons, {
-    refresh
-  }), /*#__PURE__*/React.createElement(DataTable, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GlobalButtons, {
+    setData
+  }), (data['names'] || []).length === 4 ? /*#__PURE__*/React.createElement(Grid, {
+    centered: true,
+    verticalAlign: "middle"
+  }, /*#__PURE__*/React.createElement(Grid.Row, {
+    style: {
+      height: 'calc(100vh - 16rem)'
+    }
+  }, /*#__PURE__*/React.createElement(Grid.Column, {
+    mobile: 15,
+    tablet: 15,
+    computer: 8,
+    textAlign: "center"
+  }, /*#__PURE__*/React.createElement(DataTable, {
     data,
     setData
-  })) : /*#__PURE__*/React.createElement(NameInput, {
-    names,
-    setNames
-  });
+  }))), /*#__PURE__*/React.createElement(Grid.Row, {
+    style: {
+      height: '16rem'
+    }
+  }, /*#__PURE__*/React.createElement(Grid.Column, {
+    mobile: 15,
+    tablet: 15,
+    computer: 8,
+    textAlign: "center"
+  }, /*#__PURE__*/React.createElement(GameButtons, {
+    data,
+    setData
+  })))) : /*#__PURE__*/React.createElement(NameInput, {
+    data,
+    setData
+  }));
 };
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
