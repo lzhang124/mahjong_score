@@ -11,14 +11,14 @@ const {
 } = semanticUIReact;
 const DATA_NAME = 'MahJongData';
 const DEFAULT_DATA = {
-  'names': [],
-  'scores': [],
-  'winds': [],
-  'dealers': [],
-  'winners': [],
-  'feeders': [],
-  'wind': null,
-  'dealer': null
+  names: [],
+  scores: [],
+  winds: [],
+  dealers: [],
+  winners: [],
+  feeders: [],
+  wind: null,
+  dealer: null
 };
 const WINDS = ['東', '南', '西', '北'];
 const PENALTY_POINTS = -6;

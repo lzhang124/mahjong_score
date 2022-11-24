@@ -3,14 +3,14 @@ const { Button, Grid, Input, Transition } = semanticUIReact
 
 const DATA_NAME = 'MahJongData'
 const DEFAULT_DATA = {
-  'names': [],
-  'scores': [],
-  'winds': [],
-  'dealers': [],
-  'winners': [],
-  'feeders': [],
-  'wind': null,
-  'dealer': null,
+  names: [],
+  scores: [],
+  winds: [],
+  dealers: [],
+  winners: [],
+  feeders: [],
+  wind: null,
+  dealer: null,
 }
 const WINDS = ['東', '南', '西', '北']
 const PENALTY_POINTS = -6
@@ -142,7 +142,10 @@ const GlobalButtons = ({ setData }) => {
                 testData(e.target.value)
               }}
               onKeyDown={(e) => {
-                e.key === 'Enter' && e.target.value !== '' && testData(e.target.value) && loadData(e.target.value)
+                e.key === 'Enter' &&
+                  e.target.value !== '' &&
+                  testData(e.target.value) &&
+                  loadData(e.target.value)
                 e.key === 'Escape' && setUploadOpen(false)
               }}
             />
@@ -169,10 +172,7 @@ const NameInput = ({ data, setData }) => {
         height: '100vh',
       }}
     >
-      <Grid.Column
-        mobile={15} tablet={15} computer={4}
-        textAlign='center'
-      >
+      <Grid.Column mobile={15} tablet={15} computer={4} textAlign='center'>
         <Input
           autoFocus
           fluid
@@ -180,7 +180,7 @@ const NameInput = ({ data, setData }) => {
           transparent
           placeholder='Player 1'
           value={name1}
-          onChange={e => setName1(e.target.value)}
+          onChange={(e) => setName1(e.target.value)}
         />
         <Input
           fluid
@@ -188,7 +188,7 @@ const NameInput = ({ data, setData }) => {
           transparent
           placeholder='Player 2'
           value={name2}
-          onChange={e => setName2(e.target.value)}
+          onChange={(e) => setName2(e.target.value)}
         />
         <Input
           fluid
@@ -196,7 +196,7 @@ const NameInput = ({ data, setData }) => {
           transparent
           placeholder='Player 3'
           value={name3}
-          onChange={e => setName3(e.target.value)}
+          onChange={(e) => setName3(e.target.value)}
         />
         <Input
           fluid
@@ -204,13 +204,13 @@ const NameInput = ({ data, setData }) => {
           transparent
           placeholder='Player 4'
           value={name4}
-          onChange={e => setName4(e.target.value)}
+          onChange={(e) => setName4(e.target.value)}
         />
         <Button
           inverted
           disabled={!name1 || !name2 || !name3 || !name4}
           style={{
-            marginTop: '1rem'
+            marginTop: '1rem',
           }}
           onClick={() => {
             setData({
@@ -219,7 +219,7 @@ const NameInput = ({ data, setData }) => {
                 names: [name1, name2, name3, name4],
                 wind: 0,
                 dealer: 0,
-              }
+              },
             })
           }}
         >
@@ -234,7 +234,13 @@ const DataTable = ({ data, setData }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
 
   return (
-    <Grid className='dataTable' inverted columns='equal' textAlign='center' verticalAlign='middle'>
+    <Grid
+      className='dataTable'
+      inverted
+      columns='equal'
+      textAlign='center'
+      verticalAlign='middle'
+    >
       <Grid.Row className='header'>
         <Grid.Column width={1}>{WINDS[wind]}</Grid.Column>
         {names.map((n, i) => (
@@ -253,7 +259,13 @@ const DataTable = ({ data, setData }) => {
               <div
                 className={
                   'point' +
-                  ((s < 0 && winners[i] === j) ? ' red' : winners[i] === j ? ' green' : (s < 0 && feeders[i] === j) ? ' red' : '') +
+                  (s < 0 && winners[i] === j
+                    ? ' red'
+                    : winners[i] === j
+                    ? ' green'
+                    : s < 0 && feeders[i] === j
+                    ? ' red'
+                    : '') +
                   (dealers[i] === j ? ' underlined' : '')
                 }
               >
@@ -266,7 +278,7 @@ const DataTable = ({ data, setData }) => {
       <Grid.Row className='footer'>
         <Grid.Column width={1} />
         {names.map((_, i) => (
-          <Grid.Column id={i}>{sum(scores.map(game => game[i]))}</Grid.Column>
+          <Grid.Column id={i}>{sum(scores.map((game) => game[i]))}</Grid.Column>
         ))}
       </Grid.Row>
     </Grid>
@@ -280,11 +292,13 @@ const GameButtons = ({ data, setData }) => {
   const [points, setPoints] = useState(null)
 
   const nextWind = () => {
-    return (points < 0 || winner === dealer || ((dealer + 1) % 4) !== 0) ? wind : (wind + 1) % 4
+    return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0
+      ? wind
+      : (wind + 1) % 4
   }
 
   const nextDealer = () => {
-    return (points < 0 || winner === dealer) ? dealer : (dealer + 1) % 4
+    return points < 0 || winner === dealer ? dealer : (dealer + 1) % 4
   }
 
   const nextGame = () => {
@@ -292,8 +306,12 @@ const GameButtons = ({ data, setData }) => {
     game[winner] = 0
 
     if (points > 0) {
-      winner === feeder ? game = game.map(s => s * 2) : game[feeder] = game[feeder] * 2
-      winner === dealer ? game = game.map(s => s * 2) : game[dealer] = game[dealer] * 2
+      winner === feeder
+        ? (game = game.map((s) => s * 2))
+        : (game[feeder] = game[feeder] * 2)
+      winner === dealer
+        ? (game = game.map((s) => s * 2))
+        : (game[dealer] = game[dealer] * 2)
     }
     game[winner] = -sum(game)
 
@@ -307,7 +325,7 @@ const GameButtons = ({ data, setData }) => {
         feeders: [...feeders, feeder],
         wind: nextWind(),
         dealer: nextDealer(),
-      }
+      },
     })
     setWinner(null)
     setFeeder(null)
@@ -315,7 +333,13 @@ const GameButtons = ({ data, setData }) => {
   }
 
   return (
-    <Grid className='gameButtons' inverted columns='equal' textAlign='center' verticalAlign='middle'>
+    <Grid
+      className='gameButtons'
+      inverted
+      columns='equal'
+      textAlign='center'
+      verticalAlign='middle'
+    >
       <Grid.Row>
         {names.map((n, i) => (
           <Grid.Column id={i}>
@@ -353,21 +377,23 @@ const GameButtons = ({ data, setData }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        {[PENALTY_POINTS].concat([...Array(MAX_POINTS + 1).keys()].slice(MIN_POINTS)).map((p, i) => (
-          <Grid.Column id={i} textAlign='center'>
-            <Button
-              inverted
-              circular
-              color={p > 0 ? 'white' : 'red'}
-              active={points === p}
-              onClick={() => {
-                setPoints(p)
-              }}
-            >
-              {p}
-            </Button>
-          </Grid.Column>
-        ))}
+        {[PENALTY_POINTS]
+          .concat([...Array(MAX_POINTS + 1).keys()].slice(MIN_POINTS))
+          .map((p, i) => (
+            <Grid.Column id={i} textAlign='center'>
+              <Button
+                inverted
+                circular
+                color={p > 0 ? 'white' : 'red'}
+                active={points === p}
+                onClick={() => {
+                  setPoints(p)
+                }}
+              >
+                {p}
+              </Button>
+            </Grid.Column>
+          ))}
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
@@ -399,17 +425,16 @@ const App = () => {
     <>
       <GlobalButtons {...{ setData }} />
       {(data['names'] || []).length === 4 ? (
-        <Grid
-          centered
-          verticalAlign='middle'
-        >
+        <Grid centered verticalAlign='middle'>
           <Grid.Row
             style={{
               height: 'calc(100vh - 16rem)',
             }}
           >
             <Grid.Column
-              mobile={15} tablet={15} computer={8}
+              mobile={15}
+              tablet={15}
+              computer={8}
               textAlign='center'
             >
               <DataTable {...{ data, setData }} />
@@ -421,7 +446,9 @@ const App = () => {
             }}
           >
             <Grid.Column
-              mobile={15} tablet={15} computer={8}
+              mobile={15}
+              tablet={15}
+              computer={8}
               textAlign='center'
             >
               <GameButtons {...{ data, setData }} />
