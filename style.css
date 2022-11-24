@@ -3,3 +3,60 @@ body {
   color: rgb(255, 255, 255);
   font-size: 16px;
 }
+
+#body input {
+  border-bottom: 1px solid rgb(255, 255, 255) !important;
+  padding: 10px !important;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#body table {
+  border: none;
+}
+
+#body table td {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#body thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(20, 20, 20);
+}
+
+#body tbody {
+  overflow: scroll;
+}
+
+#body tbody tr td {
+  border: none;
+}
+
+#body tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background-color: rgb(20, 20, 20);
+}
+
+#body .global-buttons {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+#body .global-buttons button {
+  margin: 10px;
+  color: rgb(100, 100, 100) !important;
+  box-shadow: 0 0 0 2px rgb(100, 100, 100) inset !important;
+}
+
+#body .global-buttons button.active,
+#body .global-buttons button:hover {
+  color: rgb(255, 255, 255) !important;
+  box-shadow: 0 0 0 2px rgb(255, 255, 255) inset !important;
+}
