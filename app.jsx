@@ -230,7 +230,7 @@ const NameInput = ({ data, setData }) => {
   )
 }
 
-const DataTable = ({ data, setData }) => {
+const DataTable = ({ data, setData, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
 
   return (
@@ -275,6 +275,7 @@ const DataTable = ({ data, setData }) => {
           ))}
         </Grid.Row>
       ))}
+      <div ref={scrollRef} />
       <Grid.Row className='footer'>
         <Grid.Column width={1} />
         {names.map((_, i) => (
@@ -285,7 +286,7 @@ const DataTable = ({ data, setData }) => {
   )
 }
 
-const GameButtons = ({ data, setData }) => {
+const GameButtons = ({ data, setData, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [winner, setWinner] = useState(null)
   const [feeder, setFeeder] = useState(null)
@@ -415,11 +416,16 @@ const GameButtons = ({ data, setData }) => {
 
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)))
+  const scrollRef = useRef(null)
 
   const setData = (data) => {
     _setData(data)
     storeData(DATA_NAME, encode(data))
   }
+
+  useEffect(() => {
+    scrollRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [data])
 
   return (
     <>
@@ -437,7 +443,7 @@ const App = () => {
               computer={8}
               textAlign='center'
             >
-              <DataTable {...{ data, setData }} />
+              <DataTable {...{ data, setData, scrollRef }} />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row
@@ -451,7 +457,7 @@ const App = () => {
               computer={8}
               textAlign='center'
             >
-              <GameButtons {...{ data, setData }} />
+              <GameButtons {...{ data, setData, scrollRef }} />
             </Grid.Column>
           </Grid.Row>
         </Grid>

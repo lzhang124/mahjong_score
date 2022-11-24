@@ -229,7 +229,8 @@ const NameInput = ({
 };
 const DataTable = ({
   data,
-  setData
+  setData,
+  scrollRef
 }) => {
   const {
     names,
@@ -263,7 +264,9 @@ const DataTable = ({
     id: j
   }, /*#__PURE__*/React.createElement("div", {
     className: 'point' + (s < 0 && winners[i] === j ? ' red' : winners[i] === j ? ' green' : s < 0 && feeders[i] === j ? ' red' : '') + (dealers[i] === j ? ' underlined' : '')
-  }, s))))), /*#__PURE__*/React.createElement(Grid.Row, {
+  }, s))))), /*#__PURE__*/React.createElement("div", {
+    ref: scrollRef
+  }), /*#__PURE__*/React.createElement(Grid.Row, {
     className: "footer"
   }, /*#__PURE__*/React.createElement(Grid.Column, {
     width: 1
@@ -273,7 +276,8 @@ const DataTable = ({
 };
 const GameButtons = ({
   data,
-  setData
+  setData,
+  scrollRef
 }) => {
   const {
     names,
@@ -368,10 +372,16 @@ const GameButtons = ({
 };
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
+  const scrollRef = useRef(null);
   const setData = data => {
     _setData(data);
     storeData(DATA_NAME, encode(data));
   };
+  useEffect(() => {
+    scrollRef.current.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }, [data]);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GlobalButtons, {
     setData
   }), (data['names'] || []).length === 4 ? /*#__PURE__*/React.createElement(Grid, {
@@ -388,7 +398,8 @@ const App = () => {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(DataTable, {
     data,
-    setData
+    setData,
+    scrollRef
   }))), /*#__PURE__*/React.createElement(Grid.Row, {
     style: {
       height: '16rem'
@@ -400,7 +411,8 @@ const App = () => {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(GameButtons, {
     data,
-    setData
+    setData,
+    scrollRef
   })))) : /*#__PURE__*/React.createElement(NameInput, {
     data,
     setData
