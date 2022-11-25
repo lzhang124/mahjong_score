@@ -398,9 +398,10 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             fluid
             inverted
             transparent
+            type='number'
             inputmode='numeric'
             pattern='[0-9]*'
-            type='number'
+            keyboardType='number-pad'
             value={points}
             placeholder='Points'
             onChange={(e) => setPoints(e.target.value === '' ? '' : parseInt(e.target.value))}
