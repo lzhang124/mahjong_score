@@ -13,9 +13,8 @@ const DEFAULT_DATA = {
   dealer: null,
 }
 const WINDS = ['東', '南', '西', '北']
-const PENALTY_POINTS = -6
-const MIN_POINTS = 3
-const MAX_POINTS = 10
+const PENALTY_POINTS = -10
+const MIN_POINTS = 5
 
 const encode = (obj) => {
   return JSON.stringify(obj)
@@ -93,11 +92,7 @@ const GlobalButtons = ({ data, setData }) => {
         <>
           {scores.length > 0 && (
             <div className='button'>
-              <Transition
-                visible={menuOpen}
-                animation='fade down'
-                duration={300}
-              >
+              <Transition visible={menuOpen} animation='fade down' duration={300}>
                 <Button
                   basic
                   inverted
@@ -123,13 +118,7 @@ const GlobalButtons = ({ data, setData }) => {
           )}
           <div className='button'>
             <Transition visible={menuOpen} animation='fade down' duration={300}>
-              <Button
-                basic
-                inverted
-                circular
-                icon={'refresh'}
-                onClick={() => setData(DEFAULT_DATA)}
-              />
+              <Button basic inverted circular icon={'refresh'} onClick={() => setData(DEFAULT_DATA)} />
             </Transition>
           </div>
         </>
@@ -177,10 +166,7 @@ const GlobalButtons = ({ data, setData }) => {
                 testData(e.target.value)
               }}
               onKeyDown={(e) => {
-                e.key === 'Enter' &&
-                  e.target.value !== '' &&
-                  testData(e.target.value) &&
-                  loadData(e.target.value)
+                e.key === 'Enter' && e.target.value !== '' && testData(e.target.value) && loadData(e.target.value)
                 e.key === 'Escape' && setUploadOpen(false)
               }}
             />
@@ -269,20 +255,12 @@ const DataTable = ({ data, setData, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
 
   return (
-    <Grid
-      className='dataTable'
-      inverted
-      columns='equal'
-      textAlign='center'
-      verticalAlign='middle'
-    >
+    <Grid className='dataTable' inverted columns='equal' textAlign='center' verticalAlign='middle'>
       <Grid.Row className='header'>
         <Grid.Column width={1}>{WINDS[wind]}</Grid.Column>
         {names.map((n, i) => (
           <Grid.Column id={i}>
-            <div className={'point' + (dealer === i ? ' underlined' : '')}>
-              {n}
-            </div>
+            <div className={'point' + (dealer === i ? ' underlined' : '')}>{n}</div>
           </Grid.Column>
         ))}
       </Grid.Row>
@@ -325,12 +303,10 @@ const GameButtons = ({ data, setData, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [winner, setWinner] = useState(null)
   const [feeder, setFeeder] = useState(null)
-  const [points, setPoints] = useState(null)
+  const [points, setPoints] = useState('')
 
   const nextWind = () => {
-    return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0
-      ? wind
-      : (wind + 1) % 4
+    return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4
   }
 
   const nextDealer = () => {
@@ -342,12 +318,8 @@ const GameButtons = ({ data, setData, scrollRef }) => {
     game[winner] = 0
 
     if (points > 0) {
-      winner === feeder
-        ? (game = game.map((s) => s * 2))
-        : (game[feeder] = game[feeder] * 2)
-      winner === dealer
-        ? (game = game.map((s) => s * 2))
-        : (game[dealer] = game[dealer] * 2)
+      winner === feeder ? (game = game.map((s) => s * 2)) : (game[feeder] = game[feeder] * 2)
+      winner === dealer ? (game = game.map((s) => s * 2)) : (game[dealer] = game[dealer] * 2)
     }
     game[winner] = -sum(game)
 
@@ -365,17 +337,11 @@ const GameButtons = ({ data, setData, scrollRef }) => {
     })
     setWinner(null)
     setFeeder(null)
-    setPoints(null)
+    setPoints('')
   }
 
   return (
-    <Grid
-      className='gameButtons'
-      inverted
-      columns='equal'
-      textAlign='center'
-      verticalAlign='middle'
-    >
+    <Grid className='gameButtons' inverted columns='equal' textAlign='center' verticalAlign='middle'>
       <Grid.Row>
         {names.map((n, i) => (
           <Grid.Column id={i}>
@@ -413,30 +379,50 @@ const GameButtons = ({ data, setData, scrollRef }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        {[PENALTY_POINTS]
-          .concat([...Array(MAX_POINTS + 1).keys()].slice(MIN_POINTS))
-          .map((p, i) => (
-            <Grid.Column id={i} textAlign='center'>
-              <Button
-                inverted
-                circular
-                color={p > 0 ? 'white' : 'red'}
-                active={points === p}
-                onClick={() => {
-                  setPoints(p)
-                }}
-              >
-                {p}
-              </Button>
-            </Grid.Column>
-          ))}
+        <Grid.Column textAlign='center' width={1}>
+          <Button
+            inverted
+            circular
+            color={'red'}
+            active={points === PENALTY_POINTS}
+            onClick={() => {
+              setPoints(PENALTY_POINTS)
+            }}
+          >
+            {PENALTY_POINTS}
+          </Button>
+        </Grid.Column>
+        <Grid.Column>
+          <Input
+            autoFocus
+            fluid
+            inverted
+            transparent
+            inputmode='numeric'
+            pattern='[0-9]*'
+            type='number'
+            value={points}
+            placeholder='Points'
+            onChange={(e) => setPoints(e.target.value === '' ? '' : parseInt(e.target.value))}
+            onKeyDown={(e) => {
+              e.key === 'Enter' &&
+                e.target.value !== '' &&
+                winner !== null &&
+                feeder !== null &&
+                points >= MIN_POINTS &&
+                nextGame()
+            }}
+          />
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
           <Button
             inverted
             fluid
-            disabled={winner === null || feeder === null || !points}
+            disabled={
+              winner === null || feeder === null || !points || (points !== PENALTY_POINTS && points < MIN_POINTS)
+            }
             onClick={() => {
               nextGame()
             }}
@@ -460,8 +446,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    scrollRef.current &&
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' })
+    scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' })
   }, [data])
 
   return (
@@ -474,12 +459,7 @@ const App = () => {
               height: 'calc(100vh - 16rem)',
             }}
           >
-            <Grid.Column
-              mobile={15}
-              tablet={15}
-              computer={8}
-              textAlign='center'
-            >
+            <Grid.Column mobile={15} tablet={15} computer={8} textAlign='center'>
               <DataTable {...{ data, setData, scrollRef }} />
             </Grid.Column>
           </Grid.Row>
@@ -488,12 +468,7 @@ const App = () => {
               height: '16rem',
             }}
           >
-            <Grid.Column
-              mobile={15}
-              tablet={15}
-              computer={8}
-              textAlign='center'
-            >
+            <Grid.Column mobile={15} tablet={15} computer={8} textAlign='center'>
               <GameButtons {...{ data, setData, scrollRef }} />
             </Grid.Column>
           </Grid.Row>

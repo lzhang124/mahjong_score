@@ -21,9 +21,8 @@ const DEFAULT_DATA = {
   dealer: null
 };
 const WINDS = ['東', '南', '西', '北'];
-const PENALTY_POINTS = -6;
-const MIN_POINTS = 3;
-const MAX_POINTS = 10;
+const PENALTY_POINTS = -10;
+const MIN_POINTS = 5;
 const encode = obj => {
   return JSON.stringify(obj);
 };
@@ -327,7 +326,7 @@ const GameButtons = ({
   } = data;
   const [winner, setWinner] = useState(null);
   const [feeder, setFeeder] = useState(null);
-  const [points, setPoints] = useState(null);
+  const [points, setPoints] = useState('');
   const nextWind = () => {
     return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4;
   };
@@ -356,7 +355,7 @@ const GameButtons = ({
     });
     setWinner(null);
     setFeeder(null);
-    setPoints(null);
+    setPoints('');
   };
   return /*#__PURE__*/React.createElement(Grid, {
     className: "gameButtons",
@@ -386,21 +385,35 @@ const GameButtons = ({
     onClick: () => {
       setFeeder(i);
     }
-  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS].concat([...Array(MAX_POINTS + 1).keys()].slice(MIN_POINTS)).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
-    id: i,
-    textAlign: "center"
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, {
+    textAlign: "center",
+    width: 1
   }, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
     circular: true,
-    color: p > 0 ? 'white' : 'red',
-    active: points === p,
+    color: 'red',
+    active: points === PENALTY_POINTS,
     onClick: () => {
-      setPoints(p);
+      setPoints(PENALTY_POINTS);
     }
-  }, p)))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
+  }, PENALTY_POINTS)), /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Input, {
+    autoFocus: true,
+    fluid: true,
+    inverted: true,
+    transparent: true,
+    inputmode: "numeric",
+    pattern: "[0-9]*",
+    type: "number",
+    value: points,
+    placeholder: "Points",
+    onChange: e => setPoints(e.target.value === '' ? '' : parseInt(e.target.value)),
+    onKeyDown: e => {
+      e.key === 'Enter' && e.target.value !== '' && winner !== null && feeder !== null && points >= MIN_POINTS && nextGame();
+    }
+  }))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
     fluid: true,
-    disabled: winner === null || feeder === null || !points,
+    disabled: winner === null || feeder === null || !points || points !== PENALTY_POINTS && points < MIN_POINTS,
     onClick: () => {
       nextGame();
     }
