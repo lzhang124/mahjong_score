@@ -386,7 +386,9 @@ const GameButtons = ({
     onClick: () => {
       setFeeder(i);
     }
-  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, {
+    className: "pointButtons"
+  }, [PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
@@ -398,7 +400,7 @@ const GameButtons = ({
   }, p))), /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pointsInput"
+    className: "pointsLabel"
   }, points)), /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Button, {

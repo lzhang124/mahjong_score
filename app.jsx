@@ -379,7 +379,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
           </Grid.Column>
         ))}
       </Grid.Row>
-      <Grid.Row>
+      <Grid.Row className='pointButtons'>
         {[PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => (
           <Grid.Column textAlign='center'>
             <Button
@@ -395,7 +395,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
           </Grid.Column>
         ))}
         <Grid.Column textAlign='center'>
-          <div className='pointsInput'>
+          <div className='pointsLabel'>
             {points}
           </div>
         </Grid.Column>
