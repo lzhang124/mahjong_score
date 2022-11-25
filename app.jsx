@@ -15,6 +15,7 @@ const DEFAULT_DATA = {
 const WINDS = ['東', '南', '西', '北']
 const PENALTY_POINTS = -10
 const MIN_POINTS = 5
+const POINT_OPTIONS = [5, 6, 8, 12, 16, 24, 32, 48, 64, 88]
 
 const encode = (obj) => {
   return JSON.stringify(obj)
@@ -303,7 +304,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [winner, setWinner] = useState(null)
   const [feeder, setFeeder] = useState(null)
-  const [points, setPoints] = useState('')
+  const [points, setPoints] = useState(5)
 
   const nextWind = () => {
     return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4
@@ -337,7 +338,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
     })
     setWinner(null)
     setFeeder(null)
-    setPoints('')
+    setPoints(5)
   }
 
   return (
@@ -379,40 +380,45 @@ const GameButtons = ({ data, setData, scrollRef }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column textAlign='center' width={1}>
+        {[PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => (
+          <Grid.Column textAlign='center'>
+            <Button
+              inverted
+              circular
+              color={p < 0 ? 'red' : 'white'}
+              onClick={() => {
+                setPoints(p)
+              }}
+            >
+              {p}
+            </Button>
+          </Grid.Column>
+        ))}
+        <Grid.Column textAlign='center'>
+          <div className='pointsInput'>
+            {points}
+          </div>
+        </Grid.Column>
+        <Grid.Column textAlign='center'>
           <Button
             inverted
             circular
-            color={'red'}
-            active={points === PENALTY_POINTS}
+            color='white'
+            icon='chevron down'
+            disabled={points <= PENALTY_POINTS}
             onClick={() => {
-              setPoints(PENALTY_POINTS)
+              setPoints(points === MIN_POINTS ? PENALTY_POINTS : points - 1)
             }}
-          >
-            {PENALTY_POINTS}
-          </Button>
+          />
         </Grid.Column>
-        <Grid.Column>
-          <Input
-            className='pointsInput'
-            autoFocus
-            fluid
+        <Grid.Column textAlign='center'>
+          <Button
             inverted
-            transparent
-            type='number'
-            inputmode='numeric'
-            pattern='[0-9]*'
-            keyboardType='number-pad'
-            value={points}
-            placeholder='Points'
-            onChange={(e) => setPoints(e.target.value === '' ? '' : parseInt(e.target.value))}
-            onKeyDown={(e) => {
-              e.key === 'Enter' &&
-                e.target.value !== '' &&
-                winner !== null &&
-                feeder !== null &&
-                points >= MIN_POINTS &&
-                nextGame()
+            circular
+            color='white'
+            icon='chevron up'
+            onClick={() => {
+              setPoints(Math.max(MIN_POINTS, points + 1))
             }}
           />
         </Grid.Column>
