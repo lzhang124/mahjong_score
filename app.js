@@ -7,6 +7,7 @@ const {
   Button,
   Grid,
   Input,
+  Table,
   Transition
 } = semanticUIReact;
 const DATA_NAME = 'MahJongData';
@@ -41,7 +42,9 @@ const sum = arr => {
 };
 const GlobalButtons = ({
   data,
-  setData
+  setData,
+  showHelp,
+  setShowHelp
 }) => {
   const {
     names,
@@ -98,7 +101,20 @@ const GlobalButtons = ({
         setMenuOpen(true);
       }
     }
-  })), (names || []).length === 4 && /*#__PURE__*/React.createElement(React.Fragment, null, scores.length > 0 && /*#__PURE__*/React.createElement("div", {
+  })), (names || []).length === 4 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: 'help',
+    active: showHelp,
+    onClick: () => setShowHelp(!showHelp)
+  }))), scores.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
@@ -262,6 +278,30 @@ const NameInput = ({
       });
     }
   }, "Start")));
+};
+const PointGuide = () => {
+  const renderExample = example => {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, example && example.map(tile => /*#__PURE__*/React.createElement("span", {
+      className: COLOR_CLASSNAMES[tile[1]]
+    }, tile[0].toUpperCase())));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "pointGuide"
+  }, /*#__PURE__*/React.createElement(Table, {
+    basic: true,
+    inverted: true
+  }, /*#__PURE__*/React.createElement(Table.Body, null, POINTS_DATA.map(({
+    points,
+    hands
+  }) => {
+    return hands.map(({
+      name,
+      description,
+      example
+    }, i) => /*#__PURE__*/React.createElement(Table.Row, null, i === 0 && /*#__PURE__*/React.createElement(Table.Cell, {
+      rowSpan: hands.length
+    }, points), /*#__PURE__*/React.createElement(Table.Cell, null, name), /*#__PURE__*/React.createElement(Table.Cell, null, description), /*#__PURE__*/React.createElement(Table.Cell, null, renderExample(example))));
+  }))));
 };
 const DataTable = ({
   data,
@@ -432,6 +472,7 @@ const GameButtons = ({
 };
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
+  const [showHelp, setShowHelp] = useState(false);
   const scrollRef = useRef(null);
   const {
     names
@@ -447,7 +488,9 @@ const App = () => {
   }, [data]);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GlobalButtons, {
     data,
-    setData
+    setData,
+    showHelp,
+    setShowHelp
   }), (names || []).length === 4 ? /*#__PURE__*/React.createElement(Grid, {
     centered: true,
     verticalAlign: "middle"
@@ -455,7 +498,12 @@ const App = () => {
     style: {
       height: 'calc(100vh - 16rem)'
     }
-  }, /*#__PURE__*/React.createElement(Grid.Column, {
+  }, showHelp ? /*#__PURE__*/React.createElement(Grid.Column, {
+    mobile: 15,
+    tablet: 15,
+    computer: 12,
+    textAlign: "center"
+  }, /*#__PURE__*/React.createElement(PointGuide, null)) : /*#__PURE__*/React.createElement(Grid.Column, {
     mobile: 15,
     tablet: 15,
     computer: 8,

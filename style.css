@@ -53,6 +53,29 @@ body {
   border: 2px solid #d65e5e;
 }
 
+#body .pointGuide {
+  max-height: calc(100vh - 18rem);
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#body .pointGuide::-webkit-scrollbar {
+  display: none;
+}
+
+#body .pointGuide span.red {
+  color: #ff5144;
+}
+
+#body .pointGuide span.green {
+  color: #22be34;
+}
+
+#body .pointGuide span.white {
+  color: rgb(255, 255, 255);
+}
+
 #body .pointsLabel {
   font-size: 1.5rem;
 }
@@ -75,25 +98,22 @@ body {
   padding: 0;
 }
 
-#body .grid.dataTable .row,
-#body .grid.gameButtons .row {
-  padding-top: .5rem;
-  padding-bottom: .5rem;
-}
-
 #body .grid.dataTable {
   max-height: calc(100vh - 18rem);
+  margin-top: 0;
   overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #body .grid.dataTable::-webkit-scrollbar {
   display: none;
 }
 
-#body .grid.dataTable {
-  margin-top: 0;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+#body .grid.dataTable .row,
+#body .grid.gameButtons .row {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 
 #body .grid.dataTable .row:not(.header, .footer):hover {

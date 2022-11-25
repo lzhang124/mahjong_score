@@ -1,5 +1,5 @@
 const { useEffect, useRef, useState } = React
-const { Button, Grid, Input, Transition } = semanticUIReact
+const { Button, Grid, Input, Table, Transition } = semanticUIReact
 
 const DATA_NAME = 'MahJongData'
 const DEFAULT_DATA = {
@@ -37,7 +37,7 @@ const sum = (arr) => {
   return arr.reduce((accum, a) => accum + a, 0)
 }
 
-const GlobalButtons = ({ data, setData }) => {
+const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [menuOpen, setMenuOpen] = useState(false)
   const [copyOpen, setCopyOpen] = useState(false)
@@ -91,6 +91,11 @@ const GlobalButtons = ({ data, setData }) => {
       </div>
       {(names || []).length === 4 && (
         <>
+          <div className='button'>
+            <Transition visible={menuOpen} animation='fade down' duration={300}>
+              <Button basic inverted circular icon={'help'} active={showHelp} onClick={() => setShowHelp(!showHelp)} />
+            </Transition>
+          </div>
           {scores.length > 0 && (
             <div className='button'>
               <Transition visible={menuOpen} animation='fade down' duration={300}>
@@ -249,6 +254,39 @@ const NameInput = ({ data, setData }) => {
         </Button>
       </Grid.Column>
     </Grid>
+  )
+}
+
+const PointGuide = () => {
+  const renderExample = (example) => {
+    return (
+      <>
+        {example && example.map((tile) => (
+          <span className={COLOR_CLASSNAMES[tile[1]]}>{tile[0].toUpperCase()}</span>
+        ))}
+      </>
+    )
+  }
+
+  return (
+    <div className='pointGuide'>
+      <Table basic inverted>
+        <Table.Body>
+          {POINTS_DATA.map(({ points, hands }) => {
+            return hands.map(({ name, description, example }, i) => (
+              <Table.Row>
+                {i === 0 && (
+                  <Table.Cell rowSpan={hands.length}>{points}</Table.Cell>
+                )}
+                <Table.Cell>{name}</Table.Cell>
+                <Table.Cell>{description}</Table.Cell>
+                <Table.Cell>{renderExample(example)}</Table.Cell>
+              </Table.Row>
+            ))
+          })}
+        </Table.Body>
+      </Table>
+    </div>
   )
 }
 
@@ -445,6 +483,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
 
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)))
+  const [showHelp, setShowHelp] = useState(false)
   const scrollRef = useRef(null)
   const { names } = data
 
@@ -459,7 +498,7 @@ const App = () => {
 
   return (
     <>
-      <GlobalButtons {...{ data, setData }} />
+      <GlobalButtons {...{ data, setData, showHelp, setShowHelp }} />
       {(names || []).length === 4 ? (
         <Grid centered verticalAlign='middle'>
           <Grid.Row
@@ -467,9 +506,15 @@ const App = () => {
               height: 'calc(100vh - 16rem)',
             }}
           >
-            <Grid.Column mobile={15} tablet={15} computer={8} textAlign='center'>
-              <DataTable {...{ data, setData, scrollRef }} />
-            </Grid.Column>
+            {showHelp ? (
+              <Grid.Column mobile={15} tablet={15} computer={12} textAlign='center'>
+                <PointGuide />
+              </Grid.Column>
+            ) : (
+              <Grid.Column mobile={15} tablet={15} computer={8} textAlign='center'>
+                <DataTable {...{ data, setData, scrollRef }} />
+              </Grid.Column>
+            )}
           </Grid.Row>
           <Grid.Row
             style={{
