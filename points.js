@@ -75,7 +75,7 @@ POINTS_DATA = [
       {
         'name': 'All Chi',
         'description': '4x chi',
-        'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '2r', '3r', '4r', ' ', '6b', '7b', '8b', ' ', '3r', '4r'],
+        'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '2r', '3r', '4r', ' ', '6b', '7b', '8b', ' ', '3r', '3r'],
       },
       {
         'name': '2x Peng',
