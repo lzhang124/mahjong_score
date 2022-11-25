@@ -231,6 +231,29 @@ POINTS_DATA = [
         'description': '9 straight, same suit',
         'example': ['1g', '2g', '3g', ' ', '4g', '5g', '6g', ' ', '7g', '8g', '9g'],
       },
+      {
+        'name': '3x Pure Shifted Chi',
+        'description': '3x chi, same suit, shifted 1/2',
+        'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '5g', '6g', '7g'],
+      },
+      {
+        'name': '3 Suit Terminal Chi',
+        'description': '2x 123 789, 5 pair, different suit',
+        'example': ['1g', '2g', '3g', ' ', '7g', '8g', '9g', ' ', '1r', '2r', '3r', ' ', '7r', '8r', '9r', ' ', '5b', '5b'],
+      },
+      {
+        'name': 'All 5',
+        'description': '5 in every set, including pair',
+        'example': ['3g', '4g', '5g', ' ', '5g', '6g', '7g', ' ', '4r', '5r', '6r', ' ', '5r', '5r', '5r', ' ', '5b', '5b'],
+      },
+      {
+        'name': '3x Peng',
+        'description': '3x peng/gang, same number',
+        'example': ['5g', '5g', '5g', ' ', '5r', '5r', '5r', ' ', '5b', '5b', '5b'],
+      },
+      {
+        'name': '3x Concealed Peng',
+      },
     ],
   },
   {
