@@ -124,6 +124,9 @@ const GlobalButtons = ({ data, setData }) => {
         </>
       )}
       <div className='button'>
+        <Transition visible={copyOpen} animation='fade left' duration={300}>
+          <div className='popup'>Config copied to clipboard!</div>
+        </Transition>
         <Transition visible={menuOpen} animation='fade down' duration={300}>
           <Button
             basic
@@ -138,24 +141,9 @@ const GlobalButtons = ({ data, setData }) => {
             }}
           />
         </Transition>
-        <Transition visible={copyOpen} animation='fade right' duration={300}>
-          <div className='popup'>Config copied to clipboard!</div>
-        </Transition>
       </div>
       <div className='button'>
-        <Transition visible={menuOpen} animation='fade down' duration={300}>
-          <Button
-            className={uploadOpen ? 'active' : ''}
-            basic
-            inverted
-            circular
-            icon='upload'
-            onClick={() => {
-              setUploadOpen(!uploadOpen)
-            }}
-          />
-        </Transition>
-        <Transition visible={uploadOpen} animation='fade right' duration={300}>
+        <Transition visible={uploadOpen} animation='fade left' duration={300}>
           <div className={`popup ${error ? 'error' : ''}`}>
             <Input
               ref={uploadRef}
@@ -171,6 +159,18 @@ const GlobalButtons = ({ data, setData }) => {
               }}
             />
           </div>
+        </Transition>
+        <Transition visible={menuOpen} animation='fade down' duration={300}>
+          <Button
+            className={uploadOpen ? 'active' : ''}
+            basic
+            inverted
+            circular
+            icon='upload'
+            onClick={() => {
+              setUploadOpen(!uploadOpen)
+            }}
+          />
         </Transition>
       </div>
     </div>

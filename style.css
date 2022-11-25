@@ -8,7 +8,7 @@ body {
 #body .global-buttons {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   z-index: 2;
 }
 
@@ -38,7 +38,7 @@ body {
 #body .popup {
   display: flex !important;
   position: absolute;
-  left: 100%;
+  right: 100%;
   width: fit-content;
   padding: .5rem 1rem;
   border: 2px solid rgb(255, 255, 255);

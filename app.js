@@ -137,6 +137,12 @@ const GlobalButtons = ({
   })))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
+    visible: copyOpen,
+    animation: "fade left",
+    duration: 300
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "popup"
+  }, "Config copied to clipboard!")), /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
     animation: "fade down",
     duration: 300
@@ -151,30 +157,11 @@ const GlobalButtons = ({
       setTimeout(() => setCopyOpen(false), 3000);
       navigator.clipboard.writeText(getData(DATA_NAME));
     }
-  })), /*#__PURE__*/React.createElement(Transition, {
-    visible: copyOpen,
-    animation: "fade right",
-    duration: 300
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "popup"
-  }, "Config copied to clipboard!"))), /*#__PURE__*/React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
-    visible: menuOpen,
-    animation: "fade down",
-    duration: 300
-  }, /*#__PURE__*/React.createElement(Button, {
-    className: uploadOpen ? 'active' : '',
-    basic: true,
-    inverted: true,
-    circular: true,
-    icon: "upload",
-    onClick: () => {
-      setUploadOpen(!uploadOpen);
-    }
-  })), /*#__PURE__*/React.createElement(Transition, {
     visible: uploadOpen,
-    animation: "fade right",
+    animation: "fade left",
     duration: 300
   }, /*#__PURE__*/React.createElement("div", {
     className: `popup ${error ? 'error' : ''}`
@@ -190,7 +177,20 @@ const GlobalButtons = ({
       e.key === 'Enter' && e.target.value !== '' && testData(e.target.value) && loadData(e.target.value);
       e.key === 'Escape' && setUploadOpen(false);
     }
-  })))));
+  }))), /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    className: uploadOpen ? 'active' : '',
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: "upload",
+    onClick: () => {
+      setUploadOpen(!uploadOpen);
+    }
+  }))));
 };
 const NameInput = ({
   data,
