@@ -394,6 +394,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
         </Grid.Column>
         <Grid.Column>
           <Input
+            className='pointsInput'
             autoFocus
             fluid
             inverted

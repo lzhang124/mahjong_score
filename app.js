@@ -397,6 +397,7 @@ const GameButtons = ({
       setPoints(PENALTY_POINTS);
     }
   }, PENALTY_POINTS)), /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Input, {
+    className: "pointsInput",
     autoFocus: true,
     fluid: true,
     inverted: true,

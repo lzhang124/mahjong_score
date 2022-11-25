@@ -63,6 +63,10 @@ body {
   -moz-appearance: textfield;
 }
 
+#body .pointsInput input {
+  font-size: 1rem;
+}
+
 #body .grid input {
   border-bottom: 1px solid rgb(255, 255, 255) !important;
   padding: 10px !important;
