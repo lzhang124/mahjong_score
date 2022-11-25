@@ -40,8 +40,19 @@ const sum = arr => {
   return arr.reduce((accum, a) => accum + a, 0);
 };
 const GlobalButtons = ({
+  data,
   setData
 }) => {
+  const {
+    names,
+    scores,
+    winds,
+    dealers,
+    winners,
+    feeders,
+    wind,
+    dealer
+  } = data;
   const [menuOpen, setMenuOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -49,8 +60,8 @@ const GlobalButtons = ({
   const uploadRef = useRef(null);
   const testData = str => {
     try {
-      decode(str);
-      setError(false);
+      let testData = decode(str);
+      setError(!Object.keys(DEFAULT_DATA).every(k => k in testData));
       return true;
     } catch (_) {
       setError(true);
@@ -87,7 +98,32 @@ const GlobalButtons = ({
         setMenuOpen(true);
       }
     }
-  })), /*#__PURE__*/React.createElement("div", {
+  })), (names || []).length === 4 && /*#__PURE__*/React.createElement(React.Fragment, null, scores.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "button"
+  }, /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: 'undo',
+    onClick: () => {
+      setData({
+        ...data,
+        ...{
+          scores: scores.slice(0, -1),
+          winds: winds.slice(0, -1),
+          dealers: dealers.slice(0, -1),
+          winners: winners.slice(0, -1),
+          feeders: feeders.slice(0, -1),
+          wind: winds.at(-1),
+          dealer: dealers.at(-1)
+        }
+      });
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
@@ -99,7 +135,7 @@ const GlobalButtons = ({
     circular: true,
     icon: 'refresh',
     onClick: () => setData(DEFAULT_DATA)
-  }))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
@@ -373,18 +409,22 @@ const GameButtons = ({
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
   const scrollRef = useRef(null);
+  const {
+    names
+  } = data;
   const setData = data => {
     _setData(data);
     storeData(DATA_NAME, encode(data));
   };
   useEffect(() => {
-    scrollRef.current.scrollIntoView({
+    scrollRef.current && scrollRef.current.scrollIntoView({
       behavior: 'smooth'
     });
   }, [data]);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(GlobalButtons, {
+    data,
     setData
-  }), (data['names'] || []).length === 4 ? /*#__PURE__*/React.createElement(Grid, {
+  }), (names || []).length === 4 ? /*#__PURE__*/React.createElement(Grid, {
     centered: true,
     verticalAlign: "middle"
   }, /*#__PURE__*/React.createElement(Grid.Row, {

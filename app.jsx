@@ -37,7 +37,8 @@ const sum = (arr) => {
   return arr.reduce((accum, a) => accum + a, 0)
 }
 
-const GlobalButtons = ({ setData }) => {
+const GlobalButtons = ({ data, setData }) => {
+  const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [menuOpen, setMenuOpen] = useState(false)
   const [copyOpen, setCopyOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
@@ -46,8 +47,8 @@ const GlobalButtons = ({ setData }) => {
 
   const testData = (str) => {
     try {
-      decode(str)
-      setError(false)
+      let testData = decode(str)
+      setError(!Object.keys(DEFAULT_DATA).every((k) => k in testData))
       return true
     } catch (_) {
       setError(true)
@@ -88,17 +89,51 @@ const GlobalButtons = ({ setData }) => {
           }}
         />
       </div>
-      <div className='button'>
-        <Transition visible={menuOpen} animation='fade down' duration={300}>
-          <Button
-            basic
-            inverted
-            circular
-            icon={'refresh'}
-            onClick={() => setData(DEFAULT_DATA)}
-          />
-        </Transition>
-      </div>
+      {(names || []).length === 4 && (
+        <>
+          {scores.length > 0 && (
+            <div className='button'>
+              <Transition
+                visible={menuOpen}
+                animation='fade down'
+                duration={300}
+              >
+                <Button
+                  basic
+                  inverted
+                  circular
+                  icon={'undo'}
+                  onClick={() => {
+                    setData({
+                      ...data,
+                      ...{
+                        scores: scores.slice(0, -1),
+                        winds: winds.slice(0, -1),
+                        dealers: dealers.slice(0, -1),
+                        winners: winners.slice(0, -1),
+                        feeders: feeders.slice(0, -1),
+                        wind: winds.at(-1),
+                        dealer: dealers.at(-1),
+                      },
+                    })
+                  }}
+                />
+              </Transition>
+            </div>
+          )}
+          <div className='button'>
+            <Transition visible={menuOpen} animation='fade down' duration={300}>
+              <Button
+                basic
+                inverted
+                circular
+                icon={'refresh'}
+                onClick={() => setData(DEFAULT_DATA)}
+              />
+            </Transition>
+          </div>
+        </>
+      )}
       <div className='button'>
         <Transition visible={menuOpen} animation='fade down' duration={300}>
           <Button
@@ -417,6 +452,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)))
   const scrollRef = useRef(null)
+  const { names } = data
 
   const setData = (data) => {
     _setData(data)
@@ -424,13 +460,14 @@ const App = () => {
   }
 
   useEffect(() => {
-    scrollRef.current.scrollIntoView({ behavior: 'smooth' })
+    scrollRef.current &&
+      scrollRef.current.scrollIntoView({ behavior: 'smooth' })
   }, [data])
 
   return (
     <>
-      <GlobalButtons {...{ setData }} />
-      {(data['names'] || []).length === 4 ? (
+      <GlobalButtons {...{ data, setData }} />
+      {(names || []).length === 4 ? (
         <Grid centered verticalAlign='middle'>
           <Grid.Row
             style={{
