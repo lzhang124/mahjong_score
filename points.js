@@ -33,17 +33,17 @@ POINTS_DATA = [
       },
       {
         'name': '2x Terminal Chi',
-        'description': '123 789, same suit',
+        'description': '123 789, one suit',
         'example': ['1g', '2g', '3g', ' ', '7g', '8g', '9g'],
       },
       {
         'name': 'Short Straight',
-        'description': '6 straight, same suit',
+        'description': '6 straight, one suit',
         'example': ['3g', '4g', '5g', ' ', '6g', '7g', '8g'],
       },
       {
         'name': '2x Pure Chi',
-        'description': '2x chi, same suit, same sequence',
+        'description': '2x chi, one suit, same sequence',
         'example': ['5g', '6g', '7g', ' ', '5g', '6g', '7g'],
       },
       {
@@ -130,7 +130,7 @@ POINTS_DATA = [
       },
       {
         'name': 'Half Flush',
-        'description': 'all one suit, can include words',
+        'description': 'only one suit, can include words',
         'example': ['3g', '3g', '3g', ' ', '4g', '5g', '6g', ' ', '8g', '8g', '8g', ' ', 'bb', 'bb', 'bb', ' ', 'wb', 'wb'],
       },
       {
@@ -199,7 +199,7 @@ POINTS_DATA = [
       {
         'name': 'Lesser Knitted + Words',
         'description': 'any words and knitted sequences, different suit',
-        'example': ['1g', '4g', '7g', ' ', '2r', '5r', '8r', ' ', '3b', '9b', ' ', 'W', 'W', 'W', 'G', 'R', 'B'],
+        'example': ['1g', '4g', '7g', ' ', '2r', '5r', '8r', ' ', '3b', '9b', ' ', 'gg', 'rr', 'bb', 'wb', 'wb', 'wb'],
       },
       {
         'name': 'Knitted Straight',
@@ -228,17 +228,17 @@ POINTS_DATA = [
     'hands': [
       {
         'name': 'Pure Straight',
-        'description': '9 straight, same suit',
+        'description': '9 straight, one suit',
         'example': ['1g', '2g', '3g', ' ', '4g', '5g', '6g', ' ', '7g', '8g', '9g'],
       },
       {
         'name': '3x Pure Shifted Chi',
-        'description': '3x chi, same suit, shifted 1/2',
+        'description': '3x chi, one suit, shifted 1/2',
         'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '5g', '6g', '7g'],
       },
       {
         'name': '3 Suit Terminal Chi',
-        'description': '2x 123 789, 5 pair, different suit',
+        'description': '2x 123 789 + 5 pair, different suit',
         'example': ['1g', '2g', '3g', ' ', '7g', '8g', '9g', ' ', '1r', '2r', '3r', ' ', '7r', '8r', '9r', ' ', '5b', '5b'],
       },
       {
@@ -259,11 +259,68 @@ POINTS_DATA = [
   {
     'points': 24,
     'hands': [
+      {
+        'name': '7 Pairs',
+        'example': ['6g', '6g', ' ', '9g', '9g', ' ', '2r', '2r', ' ', '5b', '5b', ' ', '7b', '7b', ' ', 'gg', 'gg', ' ', 'wb', 'wb'],
+      },
+      {
+        'name': 'Greater Knitted + Words',
+        'description': 'all words and knitted sequences, different suit',
+        'example': ['1g', '4g', '7g', ' ', '2r', '5r', '8r', ' ', '3b', ' ', 'gg', 'rr', 'bb', 'wb', 'wb', 'wb', 'wb'],
+      },
+      {
+        'name': 'All Even Peng',
+        'description': '4x peng/gang, only even',
+        'example': ['2g', '2g', '2g', ' ', '2r', '2r', '2r', ' ', '8r', '8r', '8r', ' ', '6b', '6b', '6b', ' ', '4b', '4b'],
+      },
+      {
+        'name': 'Full Flush',
+        'description': 'only one suit',
+        'example': ['1g', '1g', '1g', ' ', '3g', '3g', '3g', ' ', '4g', '5g', '6g', ' ', '6g', '7g', '8g', ' ', '9g', '9g'],
+      },
+      {
+        'name': '3x Pure Chi',
+        'description': '3x chi, same sequence, one suit',
+        'example': ['2g', '3g', '4g', ' ', '2g', '3g', '4g', ' ', '2g', '3g', '4g'],
+      },
+      {
+        'name': '3x Pure Shifted Peng',
+        'description': '3x peng/gang, one suit, shifted 1',
+        'example': ['2g', '2g', '2g', ' ', '3g', '3g', '3g', ' ', '4g', '4g', '4g'],
+      },
+      {
+        'name': 'Lower 3',
+        'description': 'only 1-3',
+        'example': ['1g', '1g', '1g', ' ', '1g', '2g', '3g', ' ', '3r', '3r', '3r', ' ', '1b', '2b', '3b', ' ', '3b', '3b'],
+      },
+      {
+        'name': 'Middle 3',
+        'description': 'only 4-6',
+        'example': ['4g', '4g', '4g', ' ', '4g', '5g', '6g', ' ', '6r', '6r', '6r', ' ', '4b', '5b', '6b', ' ', '6b', '6b'],
+      },
+      {
+        'name': 'Upper 3',
+        'description': 'only 7-9',
+        'example': ['7g', '7g', '7g', ' ', '7g', '8g', '9g', ' ', '9r', '9r', '9r', ' ', '7b', '8b', '9b', ' ', '9b', '9b'],
+      },
     ],
   },
   {
     'points': 32,
     'hands': [
+      {
+        'name': '4x Pure Shifted Chi',
+        'description': '4x chi, one suit, shifted 1/2',
+        'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '5g', '6g', '7g', ' ', '7g', '8g', '9g'],
+      },
+      {
+        'name': '3x Gang',
+      },
+      {
+        'name': 'All Terminal + Words',
+        'description': 'only 1/9/word',
+        'example': ['1g', '1g', '1g', ' ', '9r', '9r', '9r', ' ', 'gg', 'gg', 'gg', ' ', 'rr', 'rr', 'rr', ' ', '1b', '1b'],
+      },
     ],
   },
   {
@@ -271,12 +328,12 @@ POINTS_DATA = [
     'hands': [
       {
         'name': '4x Pure Chi',
-        'description': '4x chi, same sequence, same suit',
+        'description': '4x chi, same sequence, one suit',
         'example': ['2g', '3g', '4g', ' ', '2g', '3g', '4g', ' ', '2g', '3g', '4g', ' ', '2g', '3g', '4g'],
       },
       {
         'name': '4x Pure Shifted Peng',
-        'description': '4x peng/gang, same suit, shifted 1',
+        'description': '4x peng/gang, one suit, shifted 1',
         'example': ['2g', '2g', '2g', ' ', '3g', '3g', '3g', ' ', '4g', '4g', '4g', ' ', '5g', '5g', '5g'],
       },
     ],
@@ -284,11 +341,72 @@ POINTS_DATA = [
   {
     'points': 64,
     'hands': [
+      {
+        'name': 'All Terminal',
+        'description': 'only 1/9',
+        'example': ['1g', '1g', '1g', ' ', '9g', '9g', '9g', ' ', '1r', '1r', '1r', ' ', '1b', '1b', '1b', ' ', '9b', '9b'],
+      },
+      {
+        'name': 'Lesser 4x Winds',
+        'description': '3x wind peng/gang + 1 wind pair',
+        'example': ['wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb'],
+      },
+      {
+        'name': 'Lesser 3x Dragon',
+        'description': '2x GRB peng/gang + 1 GRB pair',
+        'example': ['gg', 'gg', 'gg', ' ', 'rr', 'rr', 'rr', ' ', 'bb', 'bb'],
+      },
+      {
+        'name': 'All Words',
+        'description': 'only words',
+        'example': ['gg', 'gg', 'gg', ' ', 'rr', 'rr', 'rr', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb'],
+      },
+      {
+        'name': '4x Concealed Peng',
+      },
+      {
+        'name': 'Pure Terminal Chi',
+        'description': '2x 123 789 + 5 pair, one suit',
+        'example': ['1r', '2r', '3r', ' ', '1r', '2r', '3r', ' ', '7r', '8r', '9r', ' ', '7r', '8r', '9r', ' ', '5r', '5r'],
+      },
     ],
   },
   {
     'points': 88,
     'hands': [
+      {
+        'name': 'Greater 4x Winds',
+        'description': '4x wind peng/gang',
+        'example': ['wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb', ' ', 'wb', 'wb', 'wb'],
+      },
+      {
+        'name': 'Greater 3x Dragon',
+        'description': '3x GRB peng/gang',
+        'example': ['gg', 'gg', 'gg', ' ', 'rr', 'rr', 'rr', ' ', 'bb', 'bb', 'bb'],
+      },
+      {
+        'name': 'All Green',
+        'description': 'only 23468 sticks, G',
+        'example': ['2g', '3g', '4g', ' ', '3g', '3g', '3g', ' ', '4g', '4g', '4g', ' ', '6g', '6g', '6g', ' ', 'gg', 'gg'],
+      },
+      {
+        'name': '9 Gates',
+        'description': '1112345678999 + 1-9, one suit',
+        'example': ['1r', '1r', '1r', '2r', '3r', '4r', '5r', '6r', '7r', '8r', '9r', '9r', '9r', ' ', '7r'],
+      },
+      {
+        'name': '4x Gang',
+      },
+      {
+        'name': '7 Shifted Pairs',
+        'description': '7x pairs, one suit, shifted 1',
+        'example': ['2g', '2g', ' ', '3g', '3g', ' ', '4g', '4g', ' ', '5g', '5g', ' ', '6g', '6g', ' ', '7g', '7g', ' ', '8g', '8g'],
+      },
+      {
+        'name': '13 Orphans',
+        'description': '191919grbwwww + word',
+        'example': ['1g', '9g', '1r', '9r', '1b', '9b', 'gg', 'rr', 'bb', 'wb', 'wb', 'wb', 'wb', ' ', 'wb'],
+      },
     ],
   },
 ]

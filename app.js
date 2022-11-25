@@ -22,8 +22,8 @@ const DEFAULT_DATA = {
   dealer: null
 };
 const WINDS = ['東', '南', '西', '北'];
-const PENALTY_POINTS = -10;
 const MIN_POINTS = 5;
+const PENALTY_POINTS = -2 * MIN_POINTS;
 const POINT_OPTIONS = [5, 6, 8, 12, 16, 24, 32, 48, 64, 88];
 const encode = obj => {
   return JSON.stringify(obj);
@@ -426,7 +426,7 @@ const GameButtons = ({
     onClick: () => {
       setFeeder(i);
     }
-  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS * 2, PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
@@ -447,9 +447,9 @@ const GameButtons = ({
     circular: true,
     color: "white",
     icon: "chevron down",
-    disabled: points <= PENALTY_POINTS,
+    disabled: points <= PENALTY_POINTS * 2,
     onClick: () => {
-      setPoints(points === MIN_POINTS ? PENALTY_POINTS : points - 1);
+      setPoints(points === MIN_POINTS ? PENALTY_POINTS : points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1);
     }
   })), /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
@@ -459,7 +459,7 @@ const GameButtons = ({
     color: "white",
     icon: "chevron up",
     onClick: () => {
-      setPoints(Math.max(MIN_POINTS, points + 1));
+      setPoints(points === PENALTY_POINTS * 2 ? PENALTY_POINTS : Math.max(MIN_POINTS, points + 1));
     }
   }))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
     inverted: true,

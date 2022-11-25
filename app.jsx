@@ -13,8 +13,8 @@ const DEFAULT_DATA = {
   dealer: null,
 }
 const WINDS = ['東', '南', '西', '北']
-const PENALTY_POINTS = -10
 const MIN_POINTS = 5
+const PENALTY_POINTS = -2 * MIN_POINTS
 const POINT_OPTIONS = [5, 6, 8, 12, 16, 24, 32, 48, 64, 88]
 
 const encode = (obj) => {
@@ -418,7 +418,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        {[PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => (
+        {[PENALTY_POINTS * 2, PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => (
           <Grid.Column textAlign='center'>
             <Button
               inverted
@@ -443,9 +443,9 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             circular
             color='white'
             icon='chevron down'
-            disabled={points <= PENALTY_POINTS}
+            disabled={points <= PENALTY_POINTS * 2}
             onClick={() => {
-              setPoints(points === MIN_POINTS ? PENALTY_POINTS : points - 1)
+              setPoints(points === MIN_POINTS ? PENALTY_POINTS : (points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1))
             }}
           />
         </Grid.Column>
@@ -456,7 +456,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             color='white'
             icon='chevron up'
             onClick={() => {
-              setPoints(Math.max(MIN_POINTS, points + 1))
+              setPoints(points === PENALTY_POINTS * 2 ? PENALTY_POINTS : Math.max(MIN_POINTS, points + 1))
             }}
           />
         </Grid.Column>
