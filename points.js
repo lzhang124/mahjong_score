@@ -18,6 +18,10 @@ POINTS_DATA = [
         'description': 'middle tile of a chi',
       },
       {
+        'name': 'Edge Wait',
+        'description': '3/7 tile of a chi',
+      },
+      {
         'name': 'No Words',
       },
       {
@@ -74,7 +78,7 @@ POINTS_DATA = [
       },
       {
         'name': 'All Chi',
-        'description': '4x chi',
+        'description': '4x chi, no words',
         'example': ['1g', '2g', '3g', ' ', '3g', '4g', '5g', ' ', '2r', '3r', '4r', ' ', '6b', '7b', '8b', ' ', '3r', '3r'],
       },
       {
