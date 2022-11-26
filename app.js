@@ -57,7 +57,8 @@ const GlobalButtons = ({
     dealer
   } = data;
   const [menuOpen, setMenuOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmUndoOpen, setConfirmUndoOpen] = useState(false);
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -96,6 +97,8 @@ const GlobalButtons = ({
     onClick: () => {
       if (menuOpen) {
         setMenuOpen(false);
+        setConfirmUndoOpen(false);
+        setConfirmResetOpen(false);
         setCopyOpen(false);
         setUploadOpen(false);
       } else {
@@ -114,11 +117,15 @@ const GlobalButtons = ({
     circular: true,
     icon: 'help',
     active: showHelp,
-    onClick: () => setShowHelp(!showHelp)
+    onClick: () => {
+      setShowHelp(!showHelp);
+      setConfirmUndoOpen(false);
+      setConfirmResetOpen(false);
+    }
   }))), scores.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
-    visible: confirmOpen,
+    visible: confirmUndoOpen,
     animation: "fade left",
     duration: 300
   }, /*#__PURE__*/React.createElement(Button, {
@@ -140,7 +147,7 @@ const GlobalButtons = ({
           dealer: dealers.at(-1)
         }
       });
-      setConfirmOpen(false);
+      setConfirmUndoOpen(false);
     }
   })), /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
@@ -152,11 +159,26 @@ const GlobalButtons = ({
     circular: true,
     icon: 'undo',
     onClick: () => {
-      setConfirmOpen(true);
+      setConfirmUndoOpen(!confirmUndoOpen);
+      setConfirmResetOpen(false);
     }
   }))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
+    visible: confirmResetOpen,
+    animation: "fade left",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    className: "popup-button",
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: "checkmark",
+    onClick: () => {
+      setData(DEFAULT_DATA);
+      setConfirmUndoOpen(false);
+    }
+  })), /*#__PURE__*/React.createElement(Transition, {
     visible: menuOpen,
     animation: "fade down",
     duration: 300
@@ -165,7 +187,10 @@ const GlobalButtons = ({
     inverted: true,
     circular: true,
     icon: 'refresh',
-    onClick: () => setData(DEFAULT_DATA)
+    onClick: () => {
+      setConfirmResetOpen(!confirmResetOpen);
+      setConfirmUndoOpen(false);
+    }
   })))), /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
@@ -188,6 +213,8 @@ const GlobalButtons = ({
       setCopyOpen(true);
       setTimeout(() => setCopyOpen(false), 3000);
       navigator.clipboard.writeText(getData(DATA_NAME));
+      setConfirmUndoOpen(false);
+      setConfirmResetOpen(false);
     }
   }))), /*#__PURE__*/React.createElement("div", {
     className: "button"
@@ -221,6 +248,8 @@ const GlobalButtons = ({
     icon: "upload",
     onClick: () => {
       setUploadOpen(!uploadOpen);
+      setConfirmUndoOpen(false);
+      setConfirmResetOpen(false);
     }
   }))));
 };

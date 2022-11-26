@@ -40,7 +40,8 @@ const sum = (arr) => {
 const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [menuOpen, setMenuOpen] = useState(false)
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmUndoOpen, setConfirmUndoOpen] = useState(false)
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false)
   const [copyOpen, setCopyOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [error, setError] = useState(false)
@@ -82,6 +83,8 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
           onClick={() => {
             if (menuOpen) {
               setMenuOpen(false)
+              setConfirmUndoOpen(false)
+              setConfirmResetOpen(false)
               setCopyOpen(false)
               setUploadOpen(false)
             } else {
@@ -94,12 +97,23 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
         <>
           <div className='button'>
             <Transition visible={menuOpen} animation='fade down' duration={300}>
-              <Button basic inverted circular icon={'help'} active={showHelp} onClick={() => setShowHelp(!showHelp)} />
+              <Button
+                basic
+                inverted
+                circular
+                icon={'help'}
+                active={showHelp}
+                onClick={() => {
+                  setShowHelp(!showHelp)
+                  setConfirmUndoOpen(false)
+                  setConfirmResetOpen(false)
+                }}
+              />
             </Transition>
           </div>
           {scores.length > 0 && (
             <div className='button'>
-              <Transition visible={confirmOpen} animation='fade left' duration={300}>
+              <Transition visible={confirmUndoOpen} animation='fade left' duration={300}>
                 <Button
                   className='popup-button'
                   basic
@@ -119,7 +133,7 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
                         dealer: dealers.at(-1),
                       },
                     })
-                    setConfirmOpen(false)
+                    setConfirmUndoOpen(false)
                   }}
                 />
               </Transition>
@@ -130,15 +144,38 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
                   circular
                   icon={'undo'}
                   onClick={() => {
-                    setConfirmOpen(true)
+                    setConfirmUndoOpen(!confirmUndoOpen)
+                    setConfirmResetOpen(false)
                   }}
                 />
               </Transition>
             </div>
           )}
           <div className='button'>
+            <Transition visible={confirmResetOpen} animation='fade left' duration={300}>
+              <Button
+                className='popup-button'
+                basic
+                inverted
+                circular
+                icon='checkmark'
+                onClick={() => {
+                  setData(DEFAULT_DATA)
+                  setConfirmUndoOpen(false)
+                }}
+              />
+            </Transition>
             <Transition visible={menuOpen} animation='fade down' duration={300}>
-              <Button basic inverted circular icon={'refresh'} onClick={() => setData(DEFAULT_DATA)} />
+              <Button
+                basic
+                inverted
+                circular
+                icon={'refresh'}
+                onClick={() => {
+                  setConfirmResetOpen(!confirmResetOpen)
+                  setConfirmUndoOpen(false)
+                }}
+              />
             </Transition>
           </div>
         </>
@@ -158,6 +195,8 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
               setCopyOpen(true)
               setTimeout(() => setCopyOpen(false), 3000)
               navigator.clipboard.writeText(getData(DATA_NAME))
+              setConfirmUndoOpen(false)
+              setConfirmResetOpen(false)
             }}
           />
         </Transition>
@@ -189,6 +228,8 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
             icon='upload'
             onClick={() => {
               setUploadOpen(!uploadOpen)
+              setConfirmUndoOpen(false)
+              setConfirmResetOpen(false)
             }}
           />
         </Transition>
