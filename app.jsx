@@ -40,6 +40,7 @@ const sum = (arr) => {
 const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [menuOpen, setMenuOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [copyOpen, setCopyOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [error, setError] = useState(false)
@@ -98,12 +99,13 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
           </div>
           {scores.length > 0 && (
             <div className='button'>
-              <Transition visible={menuOpen} animation='fade down' duration={300}>
+              <Transition visible={confirmOpen} animation='fade left' duration={300}>
                 <Button
+                  className='popup-button'
                   basic
                   inverted
                   circular
-                  icon={'undo'}
+                  icon='checkmark'
                   onClick={() => {
                     setData({
                       ...data,
@@ -117,6 +119,18 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
                         dealer: dealers.at(-1),
                       },
                     })
+                    setConfirmOpen(false)
+                  }}
+                />
+              </Transition>
+              <Transition visible={menuOpen} animation='fade down' duration={300}>
+                <Button
+                  basic
+                  inverted
+                  circular
+                  icon={'undo'}
+                  onClick={() => {
+                    setConfirmOpen(true)
                   }}
                 />
               </Transition>
@@ -261,9 +275,7 @@ const PointGuide = () => {
   const renderExample = (example) => {
     return (
       <>
-        {example && example.map((tile) => (
-          <span className={COLOR_CLASSNAMES[tile[1]]}>{tile[0].toUpperCase()}</span>
-        ))}
+        {example && example.map((tile) => <span className={COLOR_CLASSNAMES[tile[1]]}>{tile[0].toUpperCase()}</span>)}
       </>
     )
   }
@@ -275,9 +287,7 @@ const PointGuide = () => {
           {POINTS_DATA.map(({ points, hands }) => {
             return hands.map(({ name, description, example }, i) => (
               <Table.Row>
-                {i === 0 && (
-                  <Table.Cell rowSpan={hands.length}>{points}</Table.Cell>
-                )}
+                {i === 0 && <Table.Cell rowSpan={hands.length}>{points}</Table.Cell>}
                 <Table.Cell>{name}</Table.Cell>
                 <Table.Cell>{description}</Table.Cell>
                 <Table.Cell>{renderExample(example)}</Table.Cell>
@@ -433,9 +443,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
           </Grid.Column>
         ))}
         <Grid.Column textAlign='center' width={2}>
-          <div className='pointsLabel'>
-            {points}
-          </div>
+          <div className='pointsLabel'>{points}</div>
         </Grid.Column>
         <Grid.Column textAlign='center'>
           <Button
@@ -445,7 +453,9 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             icon='chevron down'
             disabled={points <= PENALTY_POINTS * 2}
             onClick={() => {
-              setPoints(points === MIN_POINTS ? PENALTY_POINTS : (points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1))
+              setPoints(
+                points === MIN_POINTS ? PENALTY_POINTS : points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1
+              )
             }}
           />
         </Grid.Column>

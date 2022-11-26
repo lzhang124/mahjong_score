@@ -57,6 +57,7 @@ const GlobalButtons = ({
     dealer
   } = data;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -117,14 +118,15 @@ const GlobalButtons = ({
   }))), scores.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "button"
   }, /*#__PURE__*/React.createElement(Transition, {
-    visible: menuOpen,
-    animation: "fade down",
+    visible: confirmOpen,
+    animation: "fade left",
     duration: 300
   }, /*#__PURE__*/React.createElement(Button, {
+    className: "popup-button",
     basic: true,
     inverted: true,
     circular: true,
-    icon: 'undo',
+    icon: "checkmark",
     onClick: () => {
       setData({
         ...data,
@@ -138,6 +140,19 @@ const GlobalButtons = ({
           dealer: dealers.at(-1)
         }
       });
+      setConfirmOpen(false);
+    }
+  })), /*#__PURE__*/React.createElement(Transition, {
+    visible: menuOpen,
+    animation: "fade down",
+    duration: 300
+  }, /*#__PURE__*/React.createElement(Button, {
+    basic: true,
+    inverted: true,
+    circular: true,
+    icon: 'undo',
+    onClick: () => {
+      setConfirmOpen(true);
     }
   }))), /*#__PURE__*/React.createElement("div", {
     className: "button"
