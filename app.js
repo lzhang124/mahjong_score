@@ -11,8 +11,12 @@ const {
   Transition
 } = semanticUIReact;
 const DATA_NAME = 'MahJongData';
+const WINDS = ['東', '南', '西', '北'];
+const MIN_POINTS = 8;
+const POINT_OPTIONS = [1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 88];
 const DEFAULT_DATA = {
   names: [],
+  minPoints: MIN_POINTS,
   scores: [],
   winds: [],
   dealers: [],
@@ -21,9 +25,6 @@ const DEFAULT_DATA = {
   wind: null,
   dealer: null
 };
-const WINDS = ['東', '南', '西', '北'];
-const MIN_POINTS = 8;
-const POINT_OPTIONS = [1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 88];
 const encode = obj => {
   return JSON.stringify(obj);
 };
@@ -254,12 +255,11 @@ const GlobalButtons = ({
 };
 const NameInput = ({
   data,
-  setData,
-  minPoints,
-  setMinPoints
+  setData
 }) => {
   const {
-    names
+    names,
+    minPoints
   } = data;
   const [name1, setName1] = useState('');
   const [name2, setName2] = useState('');
@@ -314,7 +314,12 @@ const NameInput = ({
     color: "white",
     active: minPoints === p,
     onClick: () => {
-      setMinPoints(p);
+      setData({
+        ...data,
+        ...{
+          minPoints: p
+        }
+      });
     }
   }, p))), /*#__PURE__*/React.createElement(Button, {
     inverted: true,
@@ -407,12 +412,11 @@ const DataTable = ({
 };
 const GameButtons = ({
   data,
-  setData,
-  minPoints,
-  scrollRef
+  setData
 }) => {
   const {
     names,
+    minPoints,
     scores,
     winds,
     dealers,
@@ -435,8 +439,16 @@ const GameButtons = ({
     var game = Array(4).fill(-points);
     game[winner] = 0;
     if (points > 0) {
-      winner === feeder ? game = game.map(s => s * 2) : game[feeder] = game[feeder] * 2;
-      winner === dealer ? game = game.map(s => s * 2) : game[dealer] = game[dealer] * 2;
+      var multiplier = 2;
+      for (d of [...dealers].reverse()) {
+        if (dealer === d && winner === d) {
+          multiplier += 1;
+        } else {
+          break;
+        }
+      }
+      winner === feeder ? game = game.map(s => s * multiplier) : game[feeder] = game[feeder] * multiplier;
+      winner === dealer ? game = game.map(s => s * multiplier) : game[dealer] = game[dealer] * multiplier;
     }
     game[winner] = -sum(game);
     setData({
@@ -530,7 +542,6 @@ const GameButtons = ({
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
   const [showHelp, setShowHelp] = useState(false);
-  const [minPoints, setMinPoints] = useState(MIN_POINTS);
   const scrollRef = useRef(null);
   const {
     names
@@ -582,13 +593,10 @@ const App = () => {
   }, /*#__PURE__*/React.createElement(GameButtons, {
     data,
     setData,
-    minPoints,
     scrollRef
   })))) : /*#__PURE__*/React.createElement(NameInput, {
     data,
-    setData,
-    minPoints,
-    setMinPoints
+    setData
   }));
 };
 const container = document.getElementById('root');
