@@ -19,7 +19,7 @@ POINTS_DATA = [
       },
       {
         'name': 'Edge Wait',
-        'description': '3/7 tile of a chi',
+        'description': '3/7 tile of a 123/789 chi',
       },
       {
         'name': 'No Words',

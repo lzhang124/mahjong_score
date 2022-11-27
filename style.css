@@ -53,6 +53,10 @@ body {
   border: 2px solid #d65e5e;
 }
 
+#body .minPoints>button {
+  margin: 0 5px !important;
+}
+
 #body .pointGuide {
   max-height: calc(100vh - 18rem);
   overflow: auto;

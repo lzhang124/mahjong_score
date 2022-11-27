@@ -22,9 +22,8 @@ const DEFAULT_DATA = {
   dealer: null
 };
 const WINDS = ['東', '南', '西', '北'];
-const MIN_POINTS = 5;
-const PENALTY_POINTS = -2 * MIN_POINTS;
-const POINT_OPTIONS = [5, 6, 8, 12, 16, 24, 32, 48, 64, 88];
+const MIN_POINTS = 8;
+const POINT_OPTIONS = [1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 88];
 const encode = obj => {
   return JSON.stringify(obj);
 };
@@ -255,7 +254,9 @@ const GlobalButtons = ({
 };
 const NameInput = ({
   data,
-  setData
+  setData,
+  minPoints,
+  setMinPoints
 }) => {
   const {
     names
@@ -274,7 +275,7 @@ const NameInput = ({
   }, /*#__PURE__*/React.createElement(Grid.Column, {
     mobile: 15,
     tablet: 15,
-    computer: 4,
+    computer: 8,
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Input, {
     autoFocus: true,
@@ -305,7 +306,17 @@ const NameInput = ({
     placeholder: "Player 4",
     value: name4,
     onChange: e => setName4(e.target.value)
-  }), /*#__PURE__*/React.createElement(Button, {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "minPoints"
+  }, [...Array(MIN_POINTS).keys()].map(p => p + 1).map((p, i) => /*#__PURE__*/React.createElement(Button, {
+    inverted: true,
+    circular: true,
+    color: "white",
+    active: minPoints === p,
+    onClick: () => {
+      setMinPoints(p);
+    }
+  }, p))), /*#__PURE__*/React.createElement(Button, {
     inverted: true,
     disabled: !name1 || !name2 || !name3 || !name4,
     style: {
@@ -397,6 +408,7 @@ const DataTable = ({
 const GameButtons = ({
   data,
   setData,
+  minPoints,
   scrollRef
 }) => {
   const {
@@ -412,6 +424,7 @@ const GameButtons = ({
   const [winner, setWinner] = useState(null);
   const [feeder, setFeeder] = useState(null);
   const [points, setPoints] = useState(5);
+  const penaltyPoints = -2 * minPoints;
   const nextWind = () => {
     return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4;
   };
@@ -470,7 +483,7 @@ const GameButtons = ({
     onClick: () => {
       setFeeder(i);
     }
-  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [PENALTY_POINTS * 2, PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [penaltyPoints * 2, penaltyPoints, minPoints].concat(POINT_OPTIONS.filter(p => p > minPoints)).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
@@ -491,9 +504,9 @@ const GameButtons = ({
     circular: true,
     color: "white",
     icon: "chevron down",
-    disabled: points <= PENALTY_POINTS * 2,
+    disabled: points <= penaltyPoints * 2,
     onClick: () => {
-      setPoints(points === MIN_POINTS ? PENALTY_POINTS : points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1);
+      setPoints(points === minPoints ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1);
     }
   })), /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
@@ -503,12 +516,12 @@ const GameButtons = ({
     color: "white",
     icon: "chevron up",
     onClick: () => {
-      setPoints(points === PENALTY_POINTS * 2 ? PENALTY_POINTS : Math.max(MIN_POINTS, points + 1));
+      setPoints(points === penaltyPoints * 2 ? penaltyPoints : Math.max(minPoints, points + 1));
     }
   }))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
     fluid: true,
-    disabled: winner === null || feeder === null || !points || points !== PENALTY_POINTS && points < MIN_POINTS,
+    disabled: winner === null || feeder === null || !points || points !== penaltyPoints && points < minPoints,
     onClick: () => {
       nextGame();
     }
@@ -517,6 +530,7 @@ const GameButtons = ({
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)));
   const [showHelp, setShowHelp] = useState(false);
+  const [minPoints, setMinPoints] = useState(MIN_POINTS);
   const scrollRef = useRef(null);
   const {
     names
@@ -568,10 +582,13 @@ const App = () => {
   }, /*#__PURE__*/React.createElement(GameButtons, {
     data,
     setData,
+    minPoints,
     scrollRef
   })))) : /*#__PURE__*/React.createElement(NameInput, {
     data,
-    setData
+    setData,
+    minPoints,
+    setMinPoints
   }));
 };
 const container = document.getElementById('root');

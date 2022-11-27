@@ -13,9 +13,8 @@ const DEFAULT_DATA = {
   dealer: null,
 }
 const WINDS = ['東', '南', '西', '北']
-const MIN_POINTS = 5
-const PENALTY_POINTS = -2 * MIN_POINTS
-const POINT_OPTIONS = [5, 6, 8, 12, 16, 24, 32, 48, 64, 88]
+const MIN_POINTS = 8
+const POINT_OPTIONS = [1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 88]
 
 const encode = (obj) => {
   return JSON.stringify(obj)
@@ -238,7 +237,7 @@ const GlobalButtons = ({ data, setData, showHelp, setShowHelp }) => {
   )
 }
 
-const NameInput = ({ data, setData }) => {
+const NameInput = ({ data, setData, minPoints, setMinPoints }) => {
   const { names } = data
   const [name1, setName1] = useState('')
   const [name2, setName2] = useState('')
@@ -254,7 +253,7 @@ const NameInput = ({ data, setData }) => {
         height: '100vh',
       }}
     >
-      <Grid.Column mobile={15} tablet={15} computer={4} textAlign='center'>
+      <Grid.Column mobile={15} tablet={15} computer={8} textAlign='center'>
         <Input
           autoFocus
           fluid
@@ -288,6 +287,21 @@ const NameInput = ({ data, setData }) => {
           value={name4}
           onChange={(e) => setName4(e.target.value)}
         />
+        <div className='minPoints'>
+          {[...Array(MIN_POINTS).keys()].map(p => p + 1).map((p, i) => (
+            <Button
+              inverted
+              circular
+              color='white'
+              active={minPoints === p}
+              onClick={() => {
+                setMinPoints(p)
+              }}
+            >
+              {p}
+            </Button>
+          ))}
+        </div>
         <Button
           inverted
           disabled={!name1 || !name2 || !name3 || !name4}
@@ -389,11 +403,12 @@ const DataTable = ({ data, setData, scrollRef }) => {
   )
 }
 
-const GameButtons = ({ data, setData, scrollRef }) => {
+const GameButtons = ({ data, setData, minPoints, scrollRef }) => {
   const { names, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [winner, setWinner] = useState(null)
   const [feeder, setFeeder] = useState(null)
   const [points, setPoints] = useState(5)
+  const penaltyPoints = -2 * minPoints
 
   const nextWind = () => {
     return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4
@@ -469,7 +484,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        {[PENALTY_POINTS * 2, PENALTY_POINTS].concat(POINT_OPTIONS).map((p, i) => (
+        {[penaltyPoints * 2, penaltyPoints, minPoints].concat(POINT_OPTIONS.filter((p) => p > minPoints)).map((p, i) => (
           <Grid.Column textAlign='center'>
             <Button
               inverted
@@ -492,10 +507,10 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             circular
             color='white'
             icon='chevron down'
-            disabled={points <= PENALTY_POINTS * 2}
+            disabled={points <= penaltyPoints * 2}
             onClick={() => {
               setPoints(
-                points === MIN_POINTS ? PENALTY_POINTS : points === PENALTY_POINTS ? PENALTY_POINTS * 2 : points - 1
+                points === minPoints ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1
               )
             }}
           />
@@ -507,7 +522,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
             color='white'
             icon='chevron up'
             onClick={() => {
-              setPoints(points === PENALTY_POINTS * 2 ? PENALTY_POINTS : Math.max(MIN_POINTS, points + 1))
+              setPoints(points === penaltyPoints * 2 ? penaltyPoints : Math.max(minPoints, points + 1))
             }}
           />
         </Grid.Column>
@@ -517,9 +532,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
           <Button
             inverted
             fluid
-            disabled={
-              winner === null || feeder === null || !points || (points !== PENALTY_POINTS && points < MIN_POINTS)
-            }
+            disabled={winner === null || feeder === null || !points || (points !== penaltyPoints && points < minPoints)}
             onClick={() => {
               nextGame()
             }}
@@ -535,6 +548,7 @@ const GameButtons = ({ data, setData, scrollRef }) => {
 const App = () => {
   const [data, _setData] = useState(decode(getData(DATA_NAME)))
   const [showHelp, setShowHelp] = useState(false)
+  const [minPoints, setMinPoints] = useState(MIN_POINTS)
   const scrollRef = useRef(null)
   const { names } = data
 
@@ -573,12 +587,12 @@ const App = () => {
             }}
           >
             <Grid.Column mobile={15} tablet={15} computer={12} textAlign='center'>
-              <GameButtons {...{ data, setData, scrollRef }} />
+              <GameButtons {...{ data, setData, minPoints, scrollRef }} />
             </Grid.Column>
           </Grid.Row>
         </Grid>
       ) : (
-        <NameInput {...{ data, setData }} />
+        <NameInput {...{ data, setData, minPoints, setMinPoints }} />
       )}
     </>
   )
