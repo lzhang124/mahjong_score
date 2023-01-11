@@ -139,7 +139,7 @@ POINTS_DATA = [
       },
       {
         'name': '3x Mixed Shifted Chi',
-        'description': '3x chi, different suit, shifted 1/2',
+        'description': '3x chi, different suit, shifted 1',
         'example': ['4g', '5g', '6g', ' ', '5r', '6r', '7r', ' ', '6b', '7b', '8b'],
       },
       {
