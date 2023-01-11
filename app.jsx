@@ -415,7 +415,7 @@ const GameButtons = ({ data, setData }) => {
   const { names, minPoints, scores, winds, dealers, winners, feeders, wind, dealer } = data
   const [winner, setWinner] = useState(null)
   const [feeder, setFeeder] = useState(null)
-  const [points, setPoints] = useState(5)
+  const [points, setPoints] = useState(minPoints)
   const penaltyPoints = -2 * minPoints
 
   const nextWind = () => {
@@ -432,12 +432,18 @@ const GameButtons = ({ data, setData }) => {
 
     if (points > 0) {
       var multiplier = 2
-      for (d of [...dealers].reverse()) {
+      var i = dealers.length - 1
+      while (i >= 0) {
+        var d = dealers[i]
+        var w = winners[i]
         if (dealer === d && winner === d) {
-          multiplier += 1
+          if (w === d) {
+            multiplier += 1
+          }
         } else {
           break
         }
+        i--
       }
       winner === feeder ? (game = game.map((s) => s * multiplier)) : (game[feeder] = game[feeder] * multiplier)
       winner === dealer ? (game = game.map((s) => s * multiplier)) : (game[dealer] = game[dealer] * multiplier)
@@ -458,7 +464,7 @@ const GameButtons = ({ data, setData }) => {
     })
     setWinner(null)
     setFeeder(null)
-    setPoints(5)
+    setPoints(minPoints)
   }
 
   return (
@@ -500,7 +506,7 @@ const GameButtons = ({ data, setData }) => {
         ))}
       </Grid.Row>
       <Grid.Row>
-        {[penaltyPoints * 2, penaltyPoints, minPoints]
+        {[penaltyPoints * 2, penaltyPoints, 0, minPoints]
           .concat(POINT_OPTIONS.filter((p) => p > minPoints))
           .map((p, i) => (
             <Grid.Column textAlign='center'>
@@ -528,7 +534,7 @@ const GameButtons = ({ data, setData }) => {
             disabled={points <= penaltyPoints * 2}
             onClick={() => {
               setPoints(
-                points === minPoints ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1
+                points === minPoints ? 0 : points === 0 ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1
               )
             }}
           />
@@ -540,7 +546,9 @@ const GameButtons = ({ data, setData }) => {
             color='white'
             icon='chevron up'
             onClick={() => {
-              setPoints(points === penaltyPoints * 2 ? penaltyPoints : Math.max(minPoints, points + 1))
+              setPoints(
+                points === penaltyPoints * 2 ? penaltyPoints : points === penaltyPoints ? 0 : points === 0 ? minPoints : points + 1
+              )
             }}
           />
         </Grid.Column>
@@ -550,7 +558,7 @@ const GameButtons = ({ data, setData }) => {
           <Button
             inverted
             fluid
-            disabled={winner === null || feeder === null || !points || (points !== penaltyPoints && points < minPoints)}
+            disabled={!(points === 0 || (winner !== null && (points < 0 || (feeder !== null && points >= minPoints))))}
             onClick={() => {
               nextGame()
             }}
