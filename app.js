@@ -427,7 +427,7 @@ const GameButtons = ({
   } = data;
   const [winner, setWinner] = useState(null);
   const [feeder, setFeeder] = useState(null);
-  const [points, setPoints] = useState(5);
+  const [points, setPoints] = useState(minPoints);
   const penaltyPoints = -2 * minPoints;
   const nextWind = () => {
     return points < 0 || winner === dealer || (dealer + 1) % 4 !== 0 ? wind : (wind + 1) % 4;
@@ -440,12 +440,18 @@ const GameButtons = ({
     game[winner] = 0;
     if (points > 0) {
       var multiplier = 2;
-      for (d of [...dealers].reverse()) {
+      var i = dealers.length - 1;
+      while (i >= 0) {
+        var d = dealers[i];
+        var w = winners[i];
         if (dealer === d && winner === d) {
-          multiplier += 1;
+          if (w === d) {
+            multiplier += 1;
+          }
         } else {
           break;
         }
+        i--;
       }
       winner === feeder ? game = game.map(s => s * multiplier) : game[feeder] = game[feeder] * multiplier;
       winner === dealer ? game = game.map(s => s * multiplier) : game[dealer] = game[dealer] * multiplier;
@@ -465,7 +471,7 @@ const GameButtons = ({
     });
     setWinner(null);
     setFeeder(null);
-    setPoints(5);
+    setPoints(minPoints);
   };
   return /*#__PURE__*/React.createElement(Grid, {
     className: "gameButtons",
@@ -495,7 +501,7 @@ const GameButtons = ({
     onClick: () => {
       setFeeder(i);
     }
-  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [penaltyPoints * 2, penaltyPoints, minPoints].concat(POINT_OPTIONS.filter(p => p > minPoints)).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
+  }, winner === i ? 'Self Draw' : n)))), /*#__PURE__*/React.createElement(Grid.Row, null, [penaltyPoints * 2, penaltyPoints, 0, minPoints].concat(POINT_OPTIONS.filter(p => p > minPoints)).map((p, i) => /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
   }, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
@@ -518,7 +524,7 @@ const GameButtons = ({
     icon: "chevron down",
     disabled: points <= penaltyPoints * 2,
     onClick: () => {
-      setPoints(points === minPoints ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1);
+      setPoints(points === minPoints ? 0 : points === 0 ? penaltyPoints : points === penaltyPoints ? penaltyPoints * 2 : points - 1);
     }
   })), /*#__PURE__*/React.createElement(Grid.Column, {
     textAlign: "center"
@@ -528,12 +534,12 @@ const GameButtons = ({
     color: "white",
     icon: "chevron up",
     onClick: () => {
-      setPoints(points === penaltyPoints * 2 ? penaltyPoints : Math.max(minPoints, points + 1));
+      setPoints(points === penaltyPoints * 2 ? penaltyPoints : points === penaltyPoints ? 0 : points === 0 ? minPoints : points + 1);
     }
   }))), /*#__PURE__*/React.createElement(Grid.Row, null, /*#__PURE__*/React.createElement(Grid.Column, null, /*#__PURE__*/React.createElement(Button, {
     inverted: true,
     fluid: true,
-    disabled: winner === null || feeder === null || !points || points !== penaltyPoints && points < minPoints,
+    disabled: !(points === 0 || (winner !== null && (points < 0 || (feeder !== null && points >= minPoints)))),
     onClick: () => {
       nextGame();
     }
